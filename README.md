@@ -14,13 +14,16 @@ lulujar serve                               # browser UI on http://localhost:800
 
 ### Option A — download the release (no tools needed)
 
-Grab the **`LuluJar-1.0.0.tar.gz`** asset from the
-[Releases page](https://github.com/rsv-op/LuluJar/releases), unpack it, and you are done:
+Open the [Releases page](https://github.com/rsv-op/LuluJar/releases) and download the
+**Source code (tar.gz)** or **Source code (zip)** archive for `v1.0.0`
+(the `Assets` section may also carry a ready-made `LuluJar-1.0.0.tar.gz`).
 
 ```bash
-tar xzf LuluJar-1.0.0.tar.gz
-cd LuluJar
+tar xzf LuluJar-1.0.0.tar.gz     # or unzip LuluJar-1.0.0.zip
+cd LuluJar-1.0.0
 ```
+
+Windows users: unzip, then double-click `run.bat` (or `run.bat serve`).
 
 ### Option B — clone the repository
 
@@ -33,6 +36,14 @@ cd LuluJar
 
 ```bash
 pip install lulujar          # then:  lulujar --help
+```
+
+### Option D — run it straight from the zip
+
+Nothing to install, nothing to build:
+
+```bash
+unzip LuluJar-1.0.0.zip && cd LuluJar-1.0.0 && ./run.sh serve
 ```
 
 > **Requirements:** Python 3.8+ (that is it for ZIP/APK/TAR).
