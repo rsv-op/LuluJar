@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lulujar"
+version = "1.0.0"
+description = "Universal archive extraction tool for RAR, RAR5, ZIP, APK, 7z and TAR - runs locally or in a browser."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+keywords = ["archive", "rar", "rar5", "zip", "apk", "7z", "extract", "unrar"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: System :: Archiving :: Extraction",
+]
+
+# The core tool runs on the standard library alone.
+dependencies = []
+
+[project.optional-dependencies]
+# Native RAR decoding in-process (needs a C++ compiler and Python headers).
+rar = ["unrar-cffi"]
+# Pure Python 7z support.
+sevenzip = ["py7zr"]
+# Better RAR parsing for the rarfile engine.
+rarfile = ["rarfile"]
+dev = ["pytest>=7"]
+
+[project.scripts]
+lulujar = "lulujar.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/rsv-op/LuluJar"
+Issues = "https://github.com/rsv-op/LuluJar/issues"
+
+[tool.setuptools]
+packages = ["lulujar"]
+
+[tool.setuptools.package-data]
+lulujar = ["web/*", "node/*", "node/vendor/libarchive.js/*", "node/vendor/libarchive.js/dist/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
