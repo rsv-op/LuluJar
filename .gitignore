@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+package-lock.json
+
+# ...but keep the vendored WebAssembly libarchive runtime
+!lulujar/node/vendor/libarchive.js/dist/
+!lulujar/node/vendor/libarchive.js/dist/**
+
+# LuluJar runtime data
+.lulujar/
+*.log
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/

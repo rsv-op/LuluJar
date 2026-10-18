@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LuluJar — universal archive extractor</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">📦</span>
+    <div>
+      <h1>LuluJar</h1>
+      <p class="tagline">RAR · RAR5 · ZIP · APK · 7z · TAR — any size</p>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span id="engineChip" class="chip" title="Available extraction engines">checking engines…</span>
+    <button id="themeToggle" class="icon-btn" title="Toggle light / dark">🌙</button>
+  </div>
+</header>
+
+<main class="layout">
+  <!-- ================= left: source + destination ================= -->
+  <section class="panel">
+    <h2>1 · Source</h2>
+
+    <div id="dropzone" class="dropzone">
+      <div class="dz-icon">⬆</div>
+      <p><strong>Drop an archive here</strong></p>
+      <p class="muted">.rar .zip .apk .7z .tar — no size limit</p>
+      <div class="dz-actions">
+        <button id="pickFile" class="btn primary">Choose a file</button>
+        <button id="pickServerFile" class="btn ghost">Pick from this machine</button>
+      </div>
+      <input type="file" id="fileInput" hidden>
+    </div>
+
+    <div id="sourceInfo" class="source-info hidden">
+      <div class="row">
+        <span id="sourceName" class="filename"></span>
+        <span id="sourceKind" class="badge"></span>
+      </div>
+      <div class="row muted small">
+        <span id="sourceSize"></span>
+        <button id="clearSource" class="link-btn">remove</button>
+      </div>
+    </div>
+
+    <div id="uploadProgress" class="hidden">
+      <div class="bar"><div id="uploadBar" class="bar-fill"></div></div>
+      <div class="row muted small"><span id="uploadStatus">uploading…</span></div>
+    </div>
+
+    <h2>2 · Destination</h2>
+    <div class="field">
+      <input type="text" id="destination" class="input" spellcheck="false"
+             placeholder="/path/to/output/folder">
+      <button id="browseDest" class="btn ghost small-btn">Browse…</button>
+    </div>
+    <p class="muted small">Where the extracted files land. Use <strong>Browse…</strong> to
+      walk the machine and pick a folder, or create a new one.</p>
+
+    <div class="options">
+      <label class="check">
+        <input type="checkbox" id="newFolder" checked>
+        <span>Create a sub-folder named after the archive</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="showApk" checked>
+        <span>Show APK details when the archive is an Android package</span>
+      </label>
+    </div>
+
+    <button id="extractBtn" class="btn primary big" disabled>Extract archive</button>
+
+    <div id="jobBox" class="job-box hidden">
+      <div class="row between">
+        <span id="jobStatus" class="job-status"></span>
+        <button id="cancelBtn" class="link-btn">cancel</button>
+      </div>
+      <div class="bar"><div id="jobBar" class="bar-fill"></div></div>
+      <p id="jobCurrent" class="muted small mono ellipsis"></p>
+    </div>
+
+    <div id="resultBox" class="result-box hidden"></div>
+    <div id="errorBox" class="error-box hidden"></div>
+  </section>
+
+  <!-- ================= right: output browser ================= -->
+  <section class="panel">
+    <div class="tabs">
+      <button class="tab active" data-tab="output">Extracted output</button>
+      <button class="tab" data-tab="archive">Archive contents</button>
+      <button class="tab" data-tab="apk">APK info</button>
+    </div>
+
+    <div id="tab-output" class="tab-panel active">
+      <div class="browser-head">
+        <div id="crumbs" class="crumbs"></div>
+        <div class="browser-actions">
+          <input type="search" id="filter" class="input small" placeholder="filter…">
+          <button id="refreshTree" class="icon-btn" title="Refresh">⟳</button>
+          <button id="deleteOut" class="icon-btn danger" title="Delete extracted files">🗑</button>
+        </div>
+      </div>
+      <div id="tree" class="tree"></div>
+    </div>
+
+    <div id="tab-archive" class="tab-panel">
+      <p class="muted">Select an archive on the left to see what is inside it before extracting.</p>
+      <div id="entryList" class="entry-list"></div>
+    </div>
+
+    <div id="tab-apk" class="tab-panel">
+      <p class="muted">Select an <code>.apk</code> to inspect its manifest.</p>
+      <div id="apkInfo" class="apk-info"></div>
+    </div>
+
+    <div id="previewPane" class="preview-pane hidden">
+      <div class="preview-head">
+        <span id="previewName" class="mono"></span>
+        <div>
+          <a id="downloadLink" class="btn ghost small-btn" download>Download</a>
+          <button id="closePreview" class="icon-btn" title="Close">✕</button>
+        </div>
+      </div>
+      <pre id="previewBody" class="preview-body"></pre>
+    </div>
+  </section>
+</main>
+
+<!-- ================= filesystem picker modal ================= -->
+<div id="fsModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="fsTitle">Browse</h3>
+      <button id="fsClose" class="icon-btn">✕</button>
+    </div>
+    <div id="fsCrumbs" class="crumbs small-crumbs"></div>
+    <div id="fsList" class="fs-list"></div>
+    <div class="modal-foot">
+      <input type="text" id="fsManual" class="input" placeholder="or type a full path…">
+      <button id="fsUse" class="btn primary">Use this path</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="/app.js"></script>
+</body>
+</html>
